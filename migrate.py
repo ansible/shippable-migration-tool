@@ -576,6 +576,11 @@ def generate_pipelines_config(
     else:
         entry_point = 'test/utils/shippable/shippable.sh'
 
+    if is_collection:
+        nightly_hour = 9
+    else:
+        nightly_hour = 7
+
     content = dict(
         trigger=dict(
             batch=True,
@@ -591,7 +596,7 @@ def generate_pipelines_config(
         ),
         schedules=[
             dict(
-                cron='0 0 * * *',
+                cron=f'0 {nightly_hour} * * *',  # UTC
                 displayName='Nightly',
                 always=True,
                 branches=dict(
