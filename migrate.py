@@ -623,7 +623,7 @@ def generate_pipelines_config(
             ),
             dict(
                 name='fetchDepth',
-                value=100,
+                value=0,  # default to full fetch, too shallow of a fetch causes ansible-test change detection to fall back to full tests
             ),
         ],
         resources=dict(
