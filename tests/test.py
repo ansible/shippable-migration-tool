@@ -18,12 +18,6 @@ repos = {
     'ansible-collections/amazon.aws': [
         'main',
     ],
-    'ansible/ansible': [
-        'devel',
-        'stable-2.10',
-        'stable-2.9',
-        'stable-2.8',
-    ],
     'ansible-collections/community.general': [
         'main',
         'stable-1',
