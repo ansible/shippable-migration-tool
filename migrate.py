@@ -693,6 +693,11 @@ def patch_scripts(work_tree: str, is_collection: bool) -> None:
 
     output = []
 
+    capture_collection_fixup = []
+    collection_fixup_start = 'export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible"'
+    collection_fixup_end = 'cd "${TEST_DIR}"'
+    has_collection_fixup = collection_fixup_start in lines and collection_fixup_end in lines
+
     for line in lines:
         if re.search(r'^trap cleanup', line):
             # the cleanup functions executed on Shippable were for code coverage, which is handled differently on Azure Pipelines
@@ -711,6 +716,25 @@ def patch_scripts(work_tree: str, is_collection: bool) -> None:
 
         if line == common + '''-e '^drydock/' -e '^quay.io/ansible/shippable-build-container:' | sed 's/^.* //'); do''':
             line = common + '''-e '^drydock/' -e '^quay.io/ansible/shippable-build-container:' -e '^quay.io/ansible/azure-pipelines-test-container:' | sed 's/^.* //'); do'''
+
+        # fix up collection placement
+
+        if has_collection_fixup:
+            if line == collection_fixup_end and capture_collection_fixup:
+                capture_collection_fixup.append(line)
+
+                output.append('if [ "${{SHIPPABLE_BUILD_ID:-}}" ]; then')
+                output.extend(f'    {text}' for text in capture_collection_fixup)
+                output.append('else')
+                output.append('    export ANSIBLE_COLLECTIONS_PATHS="${PWD}/../../../"')
+                output.append('fi')
+
+                capture_collection_fixup = []
+                continue
+
+            if line == collection_fixup_start or capture_collection_fixup:
+                capture_collection_fixup.append(line)
+                continue
 
         output.append(line)
 
