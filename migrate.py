@@ -723,7 +723,7 @@ def patch_scripts(work_tree: str, is_collection: bool) -> None:
             if line == collection_fixup_end and capture_collection_fixup:
                 capture_collection_fixup.append(line)
 
-                output.append('if [ "${{SHIPPABLE_BUILD_ID:-}}" ]; then')
+                output.append('if [ "${SHIPPABLE_BUILD_ID:-}" ]; then')
                 output.extend(f'    {text}' for text in capture_collection_fixup)
                 output.append('else')
                 output.append('    export ANSIBLE_COLLECTIONS_PATHS="${PWD}/../../../"')
