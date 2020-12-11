@@ -630,7 +630,7 @@ def generate_pipelines_config(
             containers=[
                 dict(
                     container='default',
-                    image='quay.io/ansible/azure-pipelines-test-container:1.7.0',
+                    image='quay.io/ansible/azure-pipelines-test-container:1.7.1',
                 ),
             ],
         ),
